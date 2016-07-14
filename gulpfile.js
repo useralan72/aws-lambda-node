@@ -7,6 +7,8 @@ var zip = require('gulp-zip');
 var AWS = require('aws-sdk');
 var fs = require('fs');
 var runSequence = require('run-sequence');
+var gulp = require('gulp');
+var mocha = require('gulp-mocha');
 
 // First we need to clean out the dist folder and remove the compiled zip file.
 gulp.task('clean', function(cb) {
@@ -19,6 +21,16 @@ gulp.task('clean', function(cb) {
 gulp.task('js', function() {
   gulp.src('index.js')
     .pipe(gulp.dest('dist/'))
+});
+
+gulp.task('test', function() {
+  return gulp.src(['specs/test-*.js'], { read: false })
+      .pipe(mocha({
+        reporter: 'spec',
+        globals: {
+          //should: require('should')
+        }
+      }));
 });
 
 // Here we want to install npm packages to dist, ignoring devDependencies.
