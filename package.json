@@ -9,15 +9,20 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "async": "^2.0.0",
     "aws-sdk": "^2.4.6",
+    "chai": "^3.5.0",
     "del": "^2.2.1",
     "gulp": "^3.9.1",
     "gulp-install": "^0.6.0",
     "gulp-rename": "^1.2.2",
     "gulp-util": "^3.0.7",
     "gulp-zip": "^3.2.0",
+    "mocha": "^2.5.3",
     "mysql": "^2.11.1",
     "node-lambda": "^0.8.6",
-    "run-sequence": "^1.2.2"
+    "q": "^1.4.1",
+    "run-sequence": "^1.2.2",
+    "sinon": "^1.17.4"
   }
 }
