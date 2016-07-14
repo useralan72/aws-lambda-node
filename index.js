@@ -4,13 +4,13 @@ const https = require('https');
 var mysql = require ('mysql');
 var AWS = require('aws-sdk');
 var Q = require('q');
+var _ = require('lodash');
 
 var routings = require("./src/routings.js");
 
 //config properties
 AWS.config.region = 'us-west-2';
 var params = {Bucket: 'lambda-function-bucket-us-west-2-1467892012680', Key: 'routing.properties'}
-AWS.config.update({accessKeyId: '', secretAccessKey: ''})
 
 var authToken = '';
 
@@ -37,6 +37,24 @@ var callRESTEndpoint = function(options) {
     request.end();
 };
 
+var options = function(siteUrl, reqPath, httpMethod) {
+    var options = {
+        hostname: siteUrl,
+        port: 443,
+        path: reqPath,
+        method: httpMethod
+    };
+    return options;
+}
+
+var replaceTokens = function(event) {
+    var jsonObject = new Map();
+    jsonObject = JSON.parse(JSON.stringify(event, null, 2));
+    _.forIn(jsonObject, function(value, key) {
+        console.log(key, value);
+    });
+}
+
 
 /**
  *  Setup the URL and options
@@ -44,7 +62,7 @@ var callRESTEndpoint = function(options) {
  */
 exports.handler = (event, context, callback) => {
   console.log('Received event:', JSON.stringify(event, null, 2));
-
+    replaceTokens(event);
     if (CACHE.size == 0) {
         var routes = routings.getRoutingFromS3(CACHE);
         new Q(routes).then(function(success){
@@ -53,6 +71,8 @@ exports.handler = (event, context, callback) => {
             console.log('Error happened', error);
             throw new Error();
         }).then(callRESTEndpoint());
+    } else {
+        callRESTEndpoint(options(CACHE.get(event.site_id), null, event.httpMethod));
     }
     console.log('CACHE {}:', JSON.stringify(CACHE, null, 2));
 };
