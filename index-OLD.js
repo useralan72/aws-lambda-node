@@ -11,6 +11,7 @@ var routings = require("./src/routings.js");
 //config properties
 AWS.config.region = 'us-west-2';
 var params = {Bucket: 'lambda-function-bucket-us-west-2-1467892012680', Key: 'routing.properties'}
+AWS.config.update({accessKeyId: '', secretAccessKey: ''})
 
 var authToken = '';
 
