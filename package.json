@@ -1,0 +1,23 @@
+{
+  "name": "node-lambda-demo",
+  "version": "1.0.0",
+  "description": "test project for lambba",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "aws-sdk": "^2.4.6",
+    "del": "^2.2.1",
+    "gulp": "^3.9.1",
+    "gulp-install": "^0.6.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-util": "^3.0.7",
+    "gulp-zip": "^3.2.0",
+    "mysql": "^2.11.1",
+    "node-lambda": "^0.8.6",
+    "run-sequence": "^1.2.2"
+  }
+}
