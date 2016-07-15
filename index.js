@@ -16,6 +16,7 @@ var params = {Bucket: 'lambda-function-bucket-us-west-2-1467892012680', Key: 'ro
 var authToken = '';
 
 var callRESTEndpoint = function(options) {
+    console.log('Calling callRESTEndpoint with ', options);
     var request = https.request(options, (response) => {
         console.log('statusCode: ', res.statusCode);
         var body = '';
@@ -29,7 +30,7 @@ var callRESTEndpoint = function(options) {
         });
     });
     request.on('error', function(err) {
-        console.log('Error happened', err);
+        console.log('Error in the REST call', err);
         throw new Error();
     });
     request.end();
@@ -61,20 +62,27 @@ var replaceTokens = function(event) {
 
 
 /**
- *  Setup the URL and options
- * Path and hostname should not be hardcoded. Also need to accept partner string from event.
+ *  Main lambda - pseudocode is
+ *  check inmemory cache for siteurl
+ *  if its there use it and call REST endpoint
  */
 exports.handler = (event, context, callback) => {
   console.log('Received event:', JSON.stringify(event, null, 2));
     //is there anything in the cache
     if (inmemorycache.myCache.keys().size === undefined) {
-        Q.nfcall(routings.getRoutingFromS3()).then(function(success){
-            routings.getRoutingFromAurora(CACHE, event.site_id);
+        var routes = routings.getRoutingFromS3(event.site_id);
+        new Q(routes).then(function(success){
+            routings.getRoutingFromAurora(event.site_id);
         }, function(error){
-            console.log('Error happened', error);
+            console.log('Error happened in first promise call', error.stack);
+            //throw new Error();
+        }).then(function(success) {
+            callRESTEndpoint(options(inmemorycache.myCache.get(event.site_id), replaceTokens(event), event.httpMethod));
+        }, function (error) {
+            console.log('Error happened in second promise call', error.stack);
             throw new Error();
-        }).then(callRESTEndpoint()).then( console.log('myCache keys {}:', inmemorycache.myCache.keys()));
+        }).then( console.log('myCache keys {}:', inmemorycache.myCache.keys()));
     } else {
-        callRESTEndpoint(options(CACHE.get(event.site_id), replaceTokens(event), event.httpMethod));
+        callRESTEndpoint(options(inmemorycache.myCache.get(event.site_id), replaceTokens(event), event.httpMethod));
     }
 };
