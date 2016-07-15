@@ -11,7 +11,6 @@ var inmemorycache = require('./src/inmemorycache');
 
 //config properties
 AWS.config.region = 'us-west-2';
-AWS.config.update({accessKeyId: 'AKIAJR7BJZ7VWPNCZYKA', secretAccessKey: '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'})
 var params = {Bucket: 'lambda-function-bucket-us-west-2-1467892012680', Key: 'routing.properties'}
 
 var authToken = '';
