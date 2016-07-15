@@ -4,12 +4,13 @@ var AWS = require('aws-sdk');
 var mysql = require ('mysql');
 var q = require('q');
 const readline = require('readline');
+var globals = require('./inmemorycache');
 
 var params = {Bucket: 'lambda-function-bucket-us-west-2-1467892012680', Key: 'routing.properties'}
 
 var exports = module.exports = {};
 
-exports.getRoutingFromS3 = function(map) {
+exports.getRoutingFromS3 = function() {
     console.log('CALLING getRoutingFromS3');
     var defer = q.defer();
     var s3 = new AWS.S3();
@@ -20,10 +21,10 @@ exports.getRoutingFromS3 = function(map) {
     rl.on('line', function(line) {
         console.log('Line reading ' + line);
         var routingsArray = line.split('=');
-        map.set(routingsArray[0].toString(), routingsArray[1]);
+        globals.myCache.set( routingsArray[0].toString(), routingsArray[1] );
     }).on('close', function() {
         console.log('Finished reading the file');
-        defer.resolve(map);
+        defer.resolve();
     });
     console.log('Returning the getRoutingFromS3 promise');
     return defer.promise;
